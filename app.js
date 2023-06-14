@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const port = 3002;
+const port = 3000;
 const commentRouter = require("./routes/comment.js");
 const postsRouter = require("./routes/posts.js");
 const connect = require("./schemas");
