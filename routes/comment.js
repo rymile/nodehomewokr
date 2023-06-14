@@ -34,6 +34,7 @@ router.get("/comment/:commentId", (req, res) => {
 router.post("/comment/:commentId/posts", async (req, res) => {
   const { commentId } = req.params;
   const { quantity } = req.body;
+  const { commentName } = req.body;
 
   const existComment = await Post.find({ commentId });
   if (existComment.length) {
@@ -43,20 +44,22 @@ router.post("/comment/:commentId/posts", async (req, res) => {
     });
   }
 
-  await Post.create({ commentId, quantity });
+  await Post.create({ commentId, quantity, commentName });
   res.json({ result: "success" });
 });
 
-//댓글 수정
+//댓글 수정_1
 router.put("/comment/:commentId/posts", async (req, res) => {
   const { commentId } = req.params;
   const { quantity } = req.body;
+  const { commentName } = req.body;
 
   const existComment = await Post.find({ commentId });
   if (existComment.length) {
     await Post.updateOne(
       { commentId: commentId },
-      { $set: { quantity: quantity } }
+      { $set: { quantity: quantity } },
+      { $set: { commentName: commentName } }
     );
   }
   res.status(200).json({ suceess: true });

@@ -1,16 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const Post = require("../schemas/posts.js");
-const Comment = require("../schemas/posts.js");
+const Comment = require("../schemas/comment.js");
 
-router.get("/post", async (req, res) => {
+router.get("/posts", async (req, res) => {
   const posts = await Post.find({});
 
-  const commentId = posts.map((post) => {
+  const commentIds = posts.map((post) => {
     return post.commentId;
   });
 
-  const comment = await Comment.find({ commentId: commentId });
+  const comment = await Comment.find({ commentId: commentIds });
 
   const result = posts.map((post) => {
     return {
@@ -20,7 +20,7 @@ router.get("/post", async (req, res) => {
   });
 
   res.json({
-    comment: result,
+    comments: result,
   });
 });
 
