@@ -1,104 +1,83 @@
 const express = require("express");
+const comment = require("../schemas/comment");
 const router = express.Router();
 
-const comment = [
-  {
-    commentId: 1,
-    name: "닉네임을 작성합니다.",
-    commentSpace: "여기는 내용을 작성하는 곳입니다.",
-  },
-  {
-    commentId: 2,
-    name: "ㅇㅇ",
-    commentSpace: "과제가 너무 힘들어요",
-  },
-];
-
-//댓글 목록 조회
+//댓글 조회
 router.get("/comment", (req, res) => {
-  res.json({ comment });
+  res.json({ comment: comment });
 });
 
 //댓글 상세 조회
-const Post = require("../schemas/posts.js");
-router.get("/comment/:commentId", (req, res) => {
-  const { commentId } = req.params;
+router.get("/comment/:commentid", (req, res) => {
+  const { commentid } = req.params;
   const { detail } = comment.filter(
-    (comment) => comment.commentId === Number(commentId)
+    (comment) => comment.commentid === Number(commentid)
   );
-
   res.json({ detail });
 });
 
-//댓글 추가
-router.post("/comment/:commentId/posts", async (req, res) => {
-  const { commentId } = req.params;
-  const { commentName } = req.body;
-  const { commentSpace } = req.body;
+const Post = require("../schemas/posts.js");
+router.post("/comment/:commentid/posts", async (req, res) => {
+  const { commentid } = req.params;
+  const { userid } = req.body;
 
-  const existComment = await Post.find({ commentId });
+  const existComment = await Post.find({ commentid });
   if (existComment.length) {
-    return req.status(400).json({
-      suceess: false,
-      errorMessage: "먼저 입력된 댓글이 존재합니다.",
+    return res.status(400).json({
+      success: false,
+      errorMessage: "이미 할당된 userid가 존재합니다.",
     });
   }
 
-  await Post.create({ commentId, commentName, commentSpace });
+  await Post.create({ commentid, userid });
+
   res.json({ result: "success" });
 });
 
-//댓글 수정_1
-router.put("/comment/:commentId/posts", async (req, res) => {
-  const { commentId } = req.params;
-  const { commentName } = req.body;
-  // const { commentSpace } = req.body;
+router.put("/comment/:commentid/posts", async (req, res) => {
+  const { commentid } = req.params;
+  const { userid } = req.body;
 
-  const existComment = await Post.find({ commentId });
+  const existComment = await Post.find({ commentid });
   if (existComment.length) {
-    await Post.updateMany(
-      { commentId: commentId },
-      { $set: { commentName: commentName } }
-      // { $set: { commentSpace: commentSpace } }
+    await Post.updateOne(
+      { commentid: commentid },
+      { $set: { userid: userid } }
     );
   }
-  res.status(200).json({ suceess: true });
+  res.status(200).json({ success: true });
 });
 
-//댓글 삭제
-router.delete("/comment/:commentId/posts", async (req, res) => {
-  const { commentId } = req.params;
-
-  const existComment = await Post.find({ commentId });
+router.delete("/comment/:commentid/posts", async (req, res) => {
+  const { commentid } = req.params;
+  const existComment = await Post.find({ commentid });
   if (existComment.length) {
-    await Post.deleteOne({ commentId });
+    await Post.deleteOne({ commentid });
   }
 
-  res.json({ result: "suceess" });
+  res.json({ result: "success" });
 });
 
-const comments = require("../schemas/comment.js");
-const post = require("../schemas/posts.js");
+//commentdb에 데이터 추가
+const Comment = require("../schemas/comment.js");
 router.post("/comment/", async (req, res) => {
-  const { commentId, name, commentSpace } = req.body;
+  const { commentid, user, password, title, content } = req.body;
 
-  const comment = await comments.find({ commentId });
+  const comment = await Comment.find({ commentid });
 
   if (comment.length) {
-    return res.status(400).json({
-      suceess: false,
-      errorMessage: "이미 존재하는 commentId입니다.",
-    });
+    return res
+      .status(400)
+      .json({ success: false, errorMessage: "이미 존재하는 user입니다." });
   }
 
-  // 댓글 DB 정보
-  const createdComment = await comments.create({
-    commentId,
-    name,
-    commentSpace,
-    commentName,
+  const createdComment = await Comment.create({
+    commentid,
+    user,
+    password,
+    title,
+    content,
   });
-
   res.json({ comment: createdComment });
 });
 

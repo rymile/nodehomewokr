@@ -5,23 +5,22 @@ const Comment = require("../schemas/comment.js");
 
 router.get("/posts", async (req, res) => {
   const posts = await Post.find({});
+  // [{user, userid}]
 
-  const commentIds = posts.map((post) => {
-    return post.commentId;
+  const users = posts.map((post) => {
+    return post.commentid;
   });
 
-  const comment = await Comment.find({ commentId: commentIds });
-
-  const result = posts.map((post) => {
+  const comment = await Comment.find({ commentid: users });
+  const results = posts.map((post) => {
     return {
-      commentSpace: post.commentSpace,
-      commentName: post.commentName,
-      comment: comment.find((item) => item.commentId === post.commentId),
+      commentid: post.commentid,
+      comment: comment.find((item) => item.commentid === post.commentid),
     };
   });
 
   res.json({
-    comments: result,
+    posts: results,
   });
 });
 
