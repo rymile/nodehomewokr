@@ -4,9 +4,6 @@ const postsSchema = new mongoose.Schema({
   commentId: {
     type: Number,
   },
-  quantity: {
-    type: Number,
-  },
   commentName: {
     type: String,
   },

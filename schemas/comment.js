@@ -10,9 +10,6 @@ const commentSchema = new mongoose.Schema({
   commentSpace: {
     type: String,
   },
-  commentName: {
-    type: String,
-  },
 });
 
 module.exports = mongoose.model("Comment", commentSchema);

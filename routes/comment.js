@@ -33,8 +33,8 @@ router.get("/comment/:commentId", (req, res) => {
 //댓글 추가
 router.post("/comment/:commentId/posts", async (req, res) => {
   const { commentId } = req.params;
-  const { quantity } = req.body;
   const { commentName } = req.body;
+  const { commentSpace } = req.body;
 
   const existComment = await Post.find({ commentId });
   if (existComment.length) {
@@ -44,22 +44,22 @@ router.post("/comment/:commentId/posts", async (req, res) => {
     });
   }
 
-  await Post.create({ commentId, quantity, commentName });
+  await Post.create({ commentId, commentName, commentSpace });
   res.json({ result: "success" });
 });
 
 //댓글 수정_1
 router.put("/comment/:commentId/posts", async (req, res) => {
   const { commentId } = req.params;
-  const { quantity } = req.body;
   const { commentName } = req.body;
+  // const { commentSpace } = req.body;
 
   const existComment = await Post.find({ commentId });
   if (existComment.length) {
-    await Post.updateOne(
+    await Post.updateMany(
       { commentId: commentId },
-      { $set: { quantity: quantity } },
       { $set: { commentName: commentName } }
+      // { $set: { commentSpace: commentSpace } }
     );
   }
   res.status(200).json({ suceess: true });
@@ -96,6 +96,7 @@ router.post("/comment/", async (req, res) => {
     commentId,
     name,
     commentSpace,
+    commentName,
   });
 
   res.json({ comment: createdComment });

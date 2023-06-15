@@ -14,7 +14,8 @@ router.get("/posts", async (req, res) => {
 
   const result = posts.map((post) => {
     return {
-      quantity: post.quantity,
+      commentSpace: post.commentSpace,
+      commentName: post.commentName,
       comment: comment.find((item) => item.commentId === post.commentId),
     };
   });
