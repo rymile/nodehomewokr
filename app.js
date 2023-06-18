@@ -1,16 +1,16 @@
 const express = require("express");
-const app = express();
-const port = 3001;
-const commentRouter = require("./routes/comment.js");
-const postsRouter = require("./routes/posts.js");
 const connect = require("./schemas");
+const routes = require("./routes");
+
+const app = express();
+const port = 3000;
+
 connect();
 
 app.use(express.json());
-app.use("/", commentRouter, postsRouter);
-app.get("/", (req, res) => {
-  res.send("개인과제 페이지입니다.");
-});
+
+app.use("/api", routes);
+
 app.listen(port, () => {
-  console.log(port, "포트로 서버가 열렸습니다!");
+  console.log(port, "서버가 실행되었습니다.");
 });
